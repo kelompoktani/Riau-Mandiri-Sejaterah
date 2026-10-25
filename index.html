@@ -218,24 +218,24 @@
                 <!-- PUSAT UNDUH E-CARD -->
                 <div class="bg-white p-5 sm:p-6 rounded-3xl shadow-sm border border-amber-100/60">
                     <h3 class="font-extrabold text-sm sm:text-base text-rms-green mb-3">
-                        <i class="fa-solid fa-id-card mr-1"></i> Pusat Unduh E-Card Anggota
+                        <i class="fa-solid fa-id-card mr-1"></i> Pusat Unduh ID Card CR80 (Standar PVC ID Card)
                     </h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-amber-50/50 p-4 rounded-2xl border border-amber-200/60 mb-4">
                         <div>
-                            <label class="form-label">1. Unduh E-Card Satuan (Pilih Anggota)</label>
+                            <label class="form-label">1. Unduh ID Card CR80 Satuan</label>
                             <div class="flex gap-2">
                                 <select id="select-single-member-ecard" class="form-input bg-white font-semibold">
                                     <option value="">-- Pilih Anggota --</option>
                                 </select>
                                 <button onclick="downloadSelectedSingleECard()" class="bg-rms-green hover:bg-rms-lightgreen text-white px-4 py-2 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1 shadow">
-                                    <i class="fa-solid fa-download"></i> Unduh
+                                    <i class="fa-solid fa-download"></i> Unduh CR80
                                 </button>
                             </div>
                         </div>
                         <div class="flex flex-col justify-end">
-                            <label class="form-label">2. Unduh Semua E-Card (ZIP Massal)</label>
+                            <label class="form-label">2. Unduh Semua ID Card CR80 (ZIP Massal)</label>
                             <button onclick="downloadAllECardsZip()" class="bg-amber-600 hover:bg-amber-700 text-white w-full py-2.5 rounded-xl text-xs font-bold transition shadow flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-file-zipper"></i> Unduh ZIP Massal
+                                <i class="fa-solid fa-file-zipper"></i> Unduh ZIP Massal CR80
                             </button>
                         </div>
                     </div>
@@ -319,7 +319,7 @@
                             <input type="month" id="filter-month" onchange="renderFinanceList()" class="text-xs p-1.5 border border-slate-200 rounded-lg">
                             <button onclick="exportFinanceReport()"
                                 class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold transition shadow">
-                                <i class="fa-solid fa-file-invoice"></i> Cetak Kas PDF (Sesuai Filter)
+                                <i class="fa-solid fa-file-invoice"></i> Cetak Kas PDF
                             </button>
                         </div>
                     </div>
@@ -398,7 +398,7 @@
         </section>
     </main>
 
-    <!-- CONTAINER TERSEMBUNYI UNTUK DOWNLOAD KARTU -->
+    <!-- CONTAINER TERSEMBUNYI UNTUK DOWNLOAD ID CARD CR80 -->
     <div id="export-card-hidden-area" style="position: fixed; left: -9999px; top: -9999px;"></div>
 
     <footer class="bg-white border-t border-amber-100 py-4 text-center text-xs text-slate-400 mt-auto">
@@ -407,7 +407,7 @@
 
     <div id="toast-container" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[100] space-y-2"></div>
 
-    <!-- SCRIPT UTAMA APLIKASI LENGKAP -->
+    <!-- SCRIPT UTAMA -->
     <script>
         const SUPABASE_URL = "https://hihhduyzosdrzbvtxsts.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_FR47_uA2_HAesqrPGvzmoA_n0KL358W";
@@ -661,87 +661,78 @@
             }
         }
 
-        async function downloadAllECardsZip() {
-            if (!dbMembers.length) { toast('Belum ada data anggota!', 'warn'); return; }
-            toast('Menyiapkan berkas ZIP massal...');
-
-            const zip = new JSZip();
-            const folder = zip.folder("E-Cards_RMS");
-
-            for (let i = 0; i < dbMembers.length; i++) {
-                const m = dbMembers[i];
-                const canvas = await generateCardCanvasElement(m);
-                const dataUrl = canvas.toDataURL("image/png");
-                const base64Data = dataUrl.replace(/^data:image\/(png|jpg);base64,/, "");
-                folder.file(`E-Card_${m.name.replace(/\s+/g,'_')}.png`, base64Data, { base64: true });
-            }
-
-            zip.generateAsync({ type: "blob" }).then(content => {
-                const a = document.createElement("a");
-                a.href = URL.createObjectURL(content);
-                a.download = `E-Cards_RMS_Massal.zip`;
-                a.click();
-                toast('ZIP Massal berhasil diunduh!');
-            });
-        }
-
+        // --- RENDER ID CARD CR80 (DENGAN QR CODE BESAR & JELAS) ---
         function generateCardCanvasElement(m) {
             return new Promise(resolve => {
                 const hiddenArea = document.getElementById('export-card-hidden-area');
                 const qrUrl = PUBLIC_URL + "?no_anggota=" + encodeURIComponent(m.no_anggota);
 
+                // Ukuran CR80 Lanskap pada 300 DPI (1012px x 638px)
                 hiddenArea.innerHTML = `
-                    <div id="temp-card" style="width:380px; padding:24px; background:linear-gradient(135deg, #1E5E3A 0%, #0F3D24 100%); color:#ffffff; border-radius:24px; border:3px solid #E5A93C; font-family:'Plus Jakarta Sans', sans-serif;">
-                        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:12px; margin-bottom:16px;">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <img src="./logo.jpg" style="width:38px; height:38px; border-radius:50%; object-fit:cover;" />
+                    <div id="temp-card" style="width:1012px; height:638px; padding:36px 48px; background:linear-gradient(135deg, #1E5E3A 0%, #0F3D24 100%); color:#ffffff; border-radius:32px; border:6px solid #E5A93C; font-family:'Plus Jakarta Sans', sans-serif; display:flex; flex-direction:column; justify-content:space-between; box-sizing:border-box;">
+                        
+                        <!-- Header Kartu -->
+                        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid rgba(255,255,255,0.25); padding-bottom:18px;">
+                            <div style="display:flex; align-items:center; gap:20px;">
+                                <img src="./logo.jpg" style="width:72px; height:72px; border-radius:50%; object-fit:cover; border:2px solid #ffffff;" />
                                 <div>
-                                    <p style="margin:0; font-size:9px; font-weight:800; color:#FDE68A;">KELOMPOK TANI</p>
-                                    <h3 style="margin:0; font-size:13px; font-weight:900; color:#ffffff;">RIAU MANDIRI SEJAHTERA</h3>
+                                    <p style="margin:0; font-size:16px; font-weight:800; color:#FDE68A; letter-spacing:1.5px;">KELOMPOK TANI</p>
+                                    <h3 style="margin:0; font-size:26px; font-weight:900; color:#ffffff; letter-spacing:0.5px;">RIAU MANDIRI SEJAHTERA</h3>
                                 </div>
                             </div>
-                            <span style="background:#F59E0B; color:#0F3D24; font-size:9px; font-weight:900; padding:3px 8px; border-radius:99px;">E-CARD</span>
+                            <span style="background:#F59E0B; color:#0F3D24; font-size:16px; font-weight:900; padding:6px 18px; border-radius:99px; letter-spacing:1px;">E-CARD</span>
                         </div>
-                        <div style="font-size:12px; margin-bottom:16px; line-height:1.6;">
-                            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                                <span style="color:#A7F3D0;">Nama Anggota</span>
-                                <strong style="font-size:13px; color:#FDE68A;">${esc(m.name)}</strong>
+
+                        <!-- Isi Data Anggota & QR Code Besar -->
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:30px;">
+                            <div style="flex:1; font-size:20px; line-height:2.1;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                    <span style="color:#A7F3D0; font-weight:600;">Nama Anggota</span>
+                                    <strong style="font-size:22px; color:#FDE68A;">${esc(m.name)}</strong>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                    <span style="color:#A7F3D0; font-weight:600;">Jabatan</span>
+                                    <span style="background:rgba(255,255,255,0.15); padding:2px 12px; border-radius:8px; font-weight:bold;">${esc(m.role)}</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                    <span style="color:#A7F3D0; font-weight:600;">Nomor Anggota</span>
+                                    <span style="font-family:monospace; color:#FDE68A; background:rgba(0,0,0,0.35); padding:2px 12px; border-radius:8px; font-weight:bold;">${esc(m.no_anggota)}</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span style="color:#A7F3D0; font-weight:600;">Wilayah</span>
+                                    <strong style="color:#ffffff;">${esc(m.loper || '-')}</strong>
+                                </div>
                             </div>
-                            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                                <span style="color:#A7F3D0;">Jabatan</span>
-                                <span style="background:rgba(255,255,255,0.15); padding:1px 6px; border-radius:4px; font-weight:bold;">${esc(m.role)}</span>
-                            </div>
-                            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                                <span style="color:#A7F3D0;">Nomor Anggota</span>
-                                <span style="font-family:monospace; color:#FDE68A; background:rgba(0,0,0,0.3); padding:1px 6px; border-radius:4px;">${esc(m.no_anggota)}</span>
-                            </div>
-                            <div style="display:flex; justify-content:space-between;">
-                                <span style="color:#A7F3D0;">Wilayah</span>
-                                <strong>${esc(m.loper || '-')}</strong>
+
+                            <!-- QR Code Box (Besar & Jelas 260px) -->
+                            <div style="background:#ffffff; padding:18px; border-radius:24px; text-align:center; border:3px solid #E5A93C; flex-shrink:0; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(qrUrl)}" style="width:260px; height:260px; display:block;" />
                             </div>
                         </div>
-                        <div style="background:#ffffff; padding:16px; border-radius:16px; text-align:center;">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(qrUrl)}" style="width:140px; height:140px; display:block; margin:0 auto;" />
+
+                        <!-- Footer Kartu -->
+                        <div style="text-align:center; border-top:1px solid rgba(255,255,255,0.15); padding-top:10px;">
+                            <p style="margin:0; font-size:14px; color:#A7F3D0; font-weight:600;">Scan QR Code untuk verifikasi identitas resmi anggota RMS</p>
                         </div>
                     </div>
                 `;
 
                 setTimeout(() => {
-                    html2canvas(document.getElementById('temp-card'), { scale: 2, useCORS: true }).then(canvas => {
+                    html2canvas(document.getElementById('temp-card'), { scale: 1, useCORS: true }).then(canvas => {
                         hiddenArea.innerHTML = '';
                         resolve(canvas);
                     });
-                }, 300);
+                }, 350);
             });
         }
 
         function downloadSingleECard(id) {
             const m = dbMembers.find(x => x.id === id);
             if (!m) return;
-            toast('Mengunduh E-Card...');
+            toast('Mengunduh ID Card CR80...');
             generateCardCanvasElement(m).then(canvas => {
                 const link = document.createElement('a');
-                link.download = `E-Card_${m.name.replace(/\s+/g,'_')}.png`;
+                link.download = `IDCard_CR80_${m.name.replace(/\s+/g,'_')}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
                 toast('Selesai diunduh!');
@@ -752,6 +743,30 @@
             const selectedId = document.getElementById('select-single-member-ecard').value;
             if (!selectedId) { toast('Pilih anggota terlebih dahulu', 'warn'); return; }
             downloadSingleECard(selectedId);
+        }
+
+        async function downloadAllECardsZip() {
+            if (!dbMembers.length) { toast('Belum ada data anggota!', 'warn'); return; }
+            toast('Menyiapkan berkas ZIP massal CR80...');
+
+            const zip = new JSZip();
+            const folder = zip.folder("ID_Cards_CR80_RMS");
+
+            for (let i = 0; i < dbMembers.length; i++) {
+                const m = dbMembers[i];
+                const canvas = await generateCardCanvasElement(m);
+                const dataUrl = canvas.toDataURL("image/png");
+                const base64Data = dataUrl.replace(/^data:image\/(png|jpg);base64,/, "");
+                folder.file(`IDCard_CR80_${m.name.replace(/\s+/g,'_')}.png`, base64Data, { base64: true });
+            }
+
+            zip.generateAsync({ type: "blob" }).then(content => {
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(content);
+                a.download = `ID_Cards_CR80_RMS_Massal.zip`;
+                a.click();
+                toast('ZIP Massal CR80 berhasil diunduh!');
+            });
         }
 
         function renderApp() {
@@ -826,7 +841,7 @@
                     </div>
                     <div class="flex items-center space-x-1 shrink-0">
                         <button onclick="downloadSingleECard('${m.id}')" class="text-rms-green text-xs px-2.5 py-1.5 font-bold bg-emerald-50 hover:bg-emerald-100 rounded-lg transition border border-emerald-200"><i class="fa-solid fa-id-card"></i></button>
-                        <button onclick="editMember('${m.id}')" class="text-amber-700 text-xs px-2 py-1.5 font-bold hover:bg-amber-100 rounded-lg transition"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="editMember('${m.id}')" class="text-amber-700 text-xs px-2.5 py-1.5 font-bold hover:bg-amber-100 rounded-lg transition"><i class="fa-solid fa-pen"></i></button>
                         <button onclick="deleteMember('${m.id}')" class="text-rose-500 text-xs px-2.5 py-1.5 font-bold hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
