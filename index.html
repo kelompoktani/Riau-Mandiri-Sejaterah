@@ -881,6 +881,24 @@
 
         window.onload = async () => {
             await syncCloudData();
+
+            // Mendeteksi parameter URL dari hasil scan QR Code
+            const urlParams = new URLSearchParams(window.location.search);
+            const scanNoAnggota = urlParams.get('no_anggota');
+
+            if (scanNoAnggota) {
+                const found = dbMembers.find(m => m.no_anggota.toUpperCase() === scanNoAnggota.toUpperCase());
+                if (found) {
+                    currentUser = { role: 'member', ...found };
+                    localStorage.setItem('rms_current_user', JSON.stringify(currentUser));
+                    renderApp();
+                    toast(`Login otomatis berhasil: ${found.name}`);
+                    // Bersihkan URL agar bersih dari parameter token
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                } else {
+                    toast('Nomor Anggota dari QR Code tidak ditemukan', 'error');
+                }
+            }
         };
     </script>
 </body>
