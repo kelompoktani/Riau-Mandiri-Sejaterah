@@ -127,7 +127,7 @@
                     </button>
                 </form>
 
-                <!-- FORM LOGIN ANGGOTA (TANPA PIN / HANYA NOMOR ANGGOTA) -->
+                <!-- FORM LOGIN ANGGOTA -->
                 <form id="form-login-member" onsubmit="handleLoginMember(event)" class="space-y-4 hidden">
                     <div>
                         <label class="form-label">Nomor Anggota Unik</label>
@@ -240,7 +240,8 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                    <!-- PENCARIAN & DAFTAR ANGGOTA -->
+                    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
                         <h4 class="font-extrabold text-sm text-slate-800">
                             <i class="fa-solid fa-address-book text-rms-green mr-1"></i> Daftar Anggota
                         </h4>
@@ -248,6 +249,9 @@
                             class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 rounded-xl font-bold transition shadow flex items-center space-x-1.5">
                             <i class="fa-solid fa-file-pdf"></i><span>Cetak Laporan PDF</span>
                         </button>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" id="search-member-input" oninput="renderMembersList()" placeholder="🔍 Cari nama atau nomor anggota..." class="form-input bg-white">
                     </div>
                     <div id="members-list-container" class="space-y-2"></div>
                 </div>
@@ -315,7 +319,7 @@
                             <input type="month" id="filter-month" onchange="renderFinanceList()" class="text-xs p-1.5 border border-slate-200 rounded-lg">
                             <button onclick="exportFinanceReport()"
                                 class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold transition shadow">
-                                <i class="fa-solid fa-file-invoice"></i> Cetak Kas PDF
+                                <i class="fa-solid fa-file-invoice"></i> Cetak Kas PDF (Sesuai Filter)
                             </button>
                         </div>
                     </div>
@@ -403,7 +407,7 @@
 
     <div id="toast-container" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[100] space-y-2"></div>
 
-    <!-- SCRIPT UTAMA APPLIKASI -->
+    <!-- SCRIPT UTAMA APLIKASI -->
     <script>
         const SUPABASE_URL = "https://hihhduyzosdrzbvtxsts.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_FR47_uA2_HAesqrPGvzmoA_n0KL358W";
@@ -490,8 +494,6 @@
         async function handleLoginMember(e) {
             e.preventDefault();
             const inputNo = document.getElementById('member-no-id').value.trim().toUpperCase();
-
-            // PENCARIAN ANGGOTA LANGSUNG DARI MEMORI/DATABASE SUPABASE
             const found = dbMembers.find(m => m.no_anggota.toUpperCase() === inputNo);
 
             if (found) {
@@ -772,13 +774,22 @@
                 dbMembers.map(m => `<option value="${m.id}">${esc(m.name)} (${esc(m.no_anggota)})</option>`).join('');
         }
 
+        // FITUR 1: PENCARIAN ANGGOTA
         function renderMembersList() {
             const c = document.getElementById('members-list-container');
-            if (!dbMembers.length) {
-                c.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Belum ada data anggota.</p>`;
+            const keyword = document.getElementById('search-member-input')?.value.toLowerCase() || '';
+            
+            const filtered = dbMembers.filter(m => 
+                m.name.toLowerCase().includes(keyword) || 
+                m.no_anggota.toLowerCase().includes(keyword) ||
+                m.role.toLowerCase().includes(keyword)
+            );
+
+            if (!filtered.length) {
+                c.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Tidak ada data anggota yang cocok.</p>`;
                 return;
             }
-            c.innerHTML = dbMembers.map(m => `
+            c.innerHTML = filtered.map(m => `
                 <div class="flex items-center justify-between p-3 bg-amber-50/30 border border-amber-100/80 rounded-2xl gap-2">
                     <div class="min-w-0">
                         <h4 class="font-extrabold text-xs text-slate-800 truncate">
@@ -798,13 +809,20 @@
 
         async function renderFinanceList() {
             const c = document.getElementById('finance-list-container');
-            if (!dbFinance.length) {
-                c.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Belum ada catatan kas.</p>`;
+            const monthFilter = document.getElementById('filter-month')?.value;
+            
+            let list = dbFinance;
+            if (monthFilter) {
+                list = list.filter(t => t.created_at && t.created_at.startsWith(monthFilter));
+            }
+
+            if (!list.length) {
+                c.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Belum ada catatan kas untuk periode ini.</p>`;
                 return;
             }
 
             let html = '';
-            for (let t of dbFinance) {
+            for (let t of list) {
                 let signedUrl = '#';
                 if (t.proof_path) {
                     const { data } = await supabaseClient.storage.from('proofs').createSignedUrl(t.proof_path, 3600);
@@ -816,7 +834,7 @@
                         <div class="min-w-0">
                             <span class="text-[10px] font-black px-2 py-0.5 rounded-md ${t.type === 'Masuk' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${esc(t.type)}</span>
                             <span class="font-bold text-xs text-slate-800 ml-1.5">${esc(t.description)}</span>
-                            <p class="text-[11px] font-extrabold text-slate-700 mt-0.5">${fmtRp(t.amount)}</p>
+                            <p class="text-[11px] font-extrabold text-slate-700 mt-0.5">${fmtRp(t.amount)} <span class="text-[9px] text-slate-400 font-normal">(${new Date(t.created_at).toLocaleDateString('id-ID')})</span></p>
                             ${t.proof_path ? `<a href="${safeLink(signedUrl)}" target="_blank" rel="noopener" class="text-[10px] text-blue-600 underline font-bold"><i class="fa-solid fa-paperclip"></i> Lihat Bukti (Private)</a>` : ''}
                         </div>
                         <button onclick="deleteTransaction('${t.id}')" class="text-rose-500 text-xs px-2 py-1.5 font-bold hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
@@ -867,22 +885,38 @@
             doc.save('Laporan_Anggota_RMS.pdf');
         }
 
+        // FITUR 3: CETAK LAPORAN KAS PDF SESUAI FILTER BULAN
         function exportFinanceReport() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            doc.text("Laporan Transaksi Kas Kelompok Tani RMS", 14, 15);
+            const monthFilter = document.getElementById('filter-month')?.value;
+            
+            let list = dbFinance;
+            let titleInfo = "Semua Periode";
+            if (monthFilter) {
+                list = list.filter(t => t.created_at && t.created_at.startsWith(monthFilter));
+                titleInfo = `Periode: ${monthFilter}`;
+            }
+
+            doc.text(`Laporan Transaksi Kas RMS (${titleInfo})`, 14, 15);
             doc.autoTable({
                 startY: 20,
-                head: [['#', 'Jenis', 'Keterangan', 'Jumlah']],
-                body: dbFinance.map((t, i) => [i + 1, t.type, t.description, fmtRp(t.amount)])
+                head: [['#', 'Tanggal', 'Jenis', 'Keterangan', 'Jumlah']],
+                body: list.map((t, i) => [
+                    i + 1, 
+                    new Date(t.created_at).toLocaleDateString('id-ID'), 
+                    t.type, 
+                    t.description, 
+                    fmtRp(t.amount)
+                ])
             });
-            doc.save('Laporan_Keuangan_RMS.pdf');
+            doc.save(`Laporan_Keuangan_RMS_${monthFilter || 'Semua'}.pdf`);
         }
 
         window.onload = async () => {
             await syncCloudData();
 
-            // Mendeteksi parameter URL dari hasil scan QR Code
+            // Auto login via QR Code URL scan
             const urlParams = new URLSearchParams(window.location.search);
             const scanNoAnggota = urlParams.get('no_anggota');
 
@@ -893,10 +927,7 @@
                     localStorage.setItem('rms_current_user', JSON.stringify(currentUser));
                     renderApp();
                     toast(`Login otomatis berhasil: ${found.name}`);
-                    // Bersihkan URL agar bersih dari parameter token
                     window.history.replaceState({}, document.title, window.location.pathname);
-                } else {
-                    toast('Nomor Anggota dari QR Code tidak ditemukan', 'error');
                 }
             }
         };
