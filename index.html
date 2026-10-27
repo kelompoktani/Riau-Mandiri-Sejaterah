@@ -661,18 +661,17 @@
             }
         }
 
-        // --- RENDER ID CARD DENGAN UKURAN & POSISI PRESISI SESUAI TEMPLAT ---
+        // --- RENDER ID CARD DENGAN UKURAN & POSISI PRESISI SESUAI TEMPLAT BARU ---
         function generateCardCanvasElement(m) {
             return new Promise(resolve => {
                 const hiddenArea = document.getElementById('export-card-hidden-area');
                 const qrUrl = PUBLIC_URL + "?no_anggota=" + encodeURIComponent(m.no_anggota);
 
-                // Menggunakan card-template.png, menempatkan teks pas di sebelah titik dua dan QR code tepat di tengah kotak putih
                 hiddenArea.innerHTML = `
                     <div id="temp-card" style="width:1012px; height:638px; background-image: url('./card-template.png'); background-size: cover; background-position: center; font-family:'Plus Jakarta Sans', sans-serif; position:relative; overflow:hidden; box-sizing:border-box;">
                         
-                        <!-- Penempatan Nilai Data Anggota (Tepat di Sebelah Titik Dua Templat) -->
-                        <div style="position:absolute; top:214px; left:268px; right:360px; display:flex; flex-direction:column; gap:21px;">
+                        <!-- Penempatan Nilai Data Anggota (Pas di Sebelah Titik Dua Templat) -->
+                        <div style="position:absolute; top:212px; left:265px; right:360px; display:flex; flex-direction:column; gap:21px;">
                             <div style="display:flex; align-items:center; height:34px;">
                                 <strong style="font-size:24px; color:#111827; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(m.name)}</strong>
                             </div>
@@ -687,9 +686,9 @@
                             </div>
                         </div>
 
-                        <!-- Penempatan QR Code (Tepat di Tengah & Ukuran Sesuai Kotak Putih Templat) -->
-                        <div style="position:absolute; top:200px; right:74px; width:220px; height:220px; background:#ffffff; display:flex; align-items:center; justify-content:center;">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=195x195&data=${encodeURIComponent(qrUrl)}" style="width:195px; height:195px; display:block;" />
+                        <!-- Penempatan QR Code (Pas di Tengah Kotak Putih Sebelah Kanan) -->
+                        <div style="position:absolute; top:215px; right:92px; width:188px; height:188px; background:#ffffff; display:flex; align-items:center; justify-content:center;">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrUrl)}" style="width:180px; height:180px; display:block;" />
                         </div>
 
                     </div>
@@ -820,7 +819,7 @@
                     <div class="flex items-center space-x-1 shrink-0">
                         <button onclick="downloadSingleECard('${m.id}')" class="text-rms-green text-xs px-2.5 py-1.5 font-bold bg-emerald-50 hover:bg-emerald-100 rounded-lg transition border border-emerald-200"><i class="fa-solid fa-id-card"></i></button>
                         <button onclick="editMember('${m.id}')" class="text-amber-700 text-xs px-2 py-1.5 font-bold hover:bg-amber-100 rounded-lg transition"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="deleteMember('${m.id}')" class="text-rose-500 text-xs px-2 py-1.5 font-bold hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="deleteMember('${m.id}')" class="text-rose-500 text-xs px-2.5 py-1.5 font-bold hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             `).join('');
