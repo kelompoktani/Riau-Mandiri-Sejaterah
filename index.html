@@ -670,41 +670,41 @@
                 hiddenArea.innerHTML = `
                     <div id="temp-card" style="width:1012px; height:638px; background-image: url('./card-template.png'); background-size: cover; background-position: center; font-family:'Plus Jakarta Sans', sans-serif; position:relative; overflow:hidden; box-sizing:border-box;">
                         
-                        <!-- Kolom Label Kiri (Nama, Jabatan, Nomor, Wilayah) -->
-                        <div style="position:absolute; top:210px; left:52px; display:flex; flex-direction:column; gap:21px; width:210px;">
-                            <div style="height:34px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A;">Nama Anggota</span></div>
-                            <div style="height:34px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A;">Jabatan</span></div>
-                            <div style="height:34px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A;">Nomor Anggota</span></div>
-                            <div style="height:34px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A;">Wilayah</span></div>
+                        <!-- Kolom Label Kiri -->
+                        <div style="position:absolute; top:208px; left:52px; display:flex; flex-direction:column; gap:21px; width:210px;">
+                            <div style="height:38px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">Nama Anggota</span></div>
+                            <div style="height:38px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">Jabatan</span></div>
+                            <div style="height:38px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">Nomor Anggota</span></div>
+                            <div style="height:38px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">Wilayah</span></div>
                         </div>
 
                         <!-- Kolom Titik Dua (:) -->
-                        <div style="position:absolute; top:210px; left:272px; display:flex; flex-direction:column; gap:21px; width:25px; text-align:center;">
-                            <div style="height:34px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A;">:</span></div>
-                            <div style="height:34px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A;">:</span></div>
-                            <div style="height:34px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A;">:</span></div>
-                            <div style="height:34px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A;">:</span></div>
+                        <div style="position:absolute; top:208px; left:272px; display:flex; flex-direction:column; gap:21px; width:25px; text-align:center;">
+                            <div style="height:38px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">:</span></div>
+                            <div style="height:38px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">:</span></div>
+                            <div style="height:38px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">:</span></div>
+                            <div style="height:38px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">:</span></div>
                         </div>
 
-                        <!-- Kolom Nilai / Data Anggota -->
-                        <div style="position:absolute; top:210px; left:305px; right:350px; display:flex; flex-direction:column; gap:21px;">
-                            <div style="height:34px; display:flex; align-items:center;">
-                                <strong style="font-size:24px; color:#111827; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(m.name)}</strong>
+                        <!-- Kolom Nilai / Data Anggota (Diperbesar tinggi baris & disesuaikan posisi kotak hijau) -->
+                        <div style="position:absolute; top:208px; left:305px; right:350px; display:flex; flex-direction:column; gap:21px;">
+                            <div style="height:38px; display:flex; align-items:center;">
+                                <strong style="font-size:24px; color:#111827; font-weight:800; line-height:1.4; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(m.name)}</strong>
                             </div>
-                            <div style="height:34px; display:flex; align-items:center;">
-                                <span style="font-size:22px; font-weight:700; color:#111827;">${esc(m.role)}</span>
+                            <div style="height:38px; display:flex; align-items:center;">
+                                <span style="font-size:22px; font-weight:700; color:#111827; line-height:1.4;">${esc(m.role)}</span>
                             </div>
-                            <div style="height:34px; display:flex; align-items:center;">
-                                <span style="font-family:monospace; font-size:22px; color:#FDE68A; background:#1E5E3A; padding:2px 16px; border-radius:8px; font-weight:bold; letter-spacing:1px; border:2px solid #D4AF37;">${esc(m.no_anggota)}</span>
+                            <div style="height:38px; display:flex; align-items:center;">
+                                <span style="font-family:monospace; font-size:22px; color:#FDE68A; background:#1E5E3A; padding:4px 18px; border-radius:8px; font-weight:bold; letter-spacing:1px; border:2px solid #D4AF37; line-height:1.2; display:inline-block; transform:translateY(-1px);">${esc(m.no_anggota)}</span>
                             </div>
-                            <div style="height:34px; display:flex; align-items:center;">
-                                <strong style="font-size:22px; color:#111827; font-weight:700;">${esc(m.loper || '-')}</strong>
+                            <div style="height:38px; display:flex; align-items:center;">
+                                <strong style="font-size:22px; color:#111827; font-weight:700; line-height:1.4;">${esc(m.loper || '-')}</strong>
                             </div>
                         </div>
 
-                        <!-- Penempatan QR Code (Pas di Tengah & Mengisi Kotak Putih Templat) -->
-                        <div style="position:absolute; top:215px; right:92px; width:188px; height:188px; background:#ffffff; display:flex; align-items:center; justify-content:center;">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrUrl)}" style="width:180px; height:180px; display:block;" />
+                        <!-- Penempatan QR Code (Diperbesar ukurannya agar pas mengisi kotak putih) -->
+                        <div style="position:absolute; top:204px; right:82px; width:208px; height:208px; background:#ffffff; display:flex; align-items:center; justify-content:center;">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUrl)}" style="width:200px; height:200px; display:block;" />
                         </div>
 
                     </div>
