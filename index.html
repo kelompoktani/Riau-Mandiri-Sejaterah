@@ -661,7 +661,7 @@
             }
         }
 
-        // --- RENDER ID CARD DENGAN UKURAN QR CODE PRESISI 300x300 PX ---
+        // --- RENDER ID CARD DENGAN UKURAN QR CODE PRESISI 270x270 PX ---
         function generateCardCanvasElement(m) {
             return new Promise(resolve => {
                 const hiddenArea = document.getElementById('export-card-hidden-area');
@@ -687,7 +687,7 @@
                         </div>
 
                         <!-- Kolom Nilai / Data Anggota -->
-                        <div style="position:absolute; top:200px; left:305px; right:360px; display:flex; flex-direction:column; gap:20px;">
+                        <div style="position:absolute; top:200px; left:305px; right:350px; display:flex; flex-direction:column; gap:20px;">
                             <div style="height:42px; display:flex; align-items:center;">
                                 <strong style="font-size:26px; color:#111827; font-weight:800; line-height:1.2; white-space:nowrap; overflow:visible;">${esc(m.name)}</strong>
                             </div>
@@ -702,9 +702,9 @@
                             </div>
                         </div>
 
-                        <!-- Penempatan QR Code (Ukuran presisi 300x300 px di dalam kotak putih templat) -->
-                        <div style="position:absolute; top:169px; right:67px; width:300px; height:300px; background:#ffffff; display:flex; align-items:center; justify-content:center;">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrUrl)}" style="width:300px; height:300px; display:block;" />
+                        <!-- Penempatan QR Code (Ukuran presisi 270x270 px di dalam kotak putih templat) -->
+                        <div style="position:absolute; top:184px; right:82px; width:270px; height:270px; background:#ffffff; display:flex; align-items:center; justify-content:center;">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=270x270&data=${encodeURIComponent(qrUrl)}" style="width:270px; height:270px; display:block;" />
                         </div>
 
                     </div>
@@ -834,7 +834,7 @@
                     </div>
                     <div class="flex items-center space-x-1 shrink-0">
                         <button onclick="downloadSingleECard('${m.id}')" class="text-rms-green text-xs px-2.5 py-1.5 font-bold bg-emerald-50 hover:bg-emerald-100 rounded-lg transition border border-emerald-200"><i class="fa-solid fa-id-card"></i></button>
-                        <button onclick="editMember('${m.id}')" class="text-amber-700 text-xs px-2 py-1.5 font-bold hover:bg-amber-100 rounded-lg transition"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="editMember('${m.id}')" class="text-amber-700 text-xs px-2.5 py-1.5 font-bold hover:bg-amber-100 rounded-lg transition"><i class="fa-solid fa-pen"></i></button>
                         <button onclick="deleteMember('${m.id}')" class="text-rose-500 text-xs px-2.5 py-1.5 font-bold hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
@@ -953,7 +953,7 @@
             const scanNoAnggota = urlParams.get('no_anggota');
 
             if (scanNoAnggota) {
-                const found = dbMembers.find(m => m.no_anggota.toUpperCase() === scanNoAnggota.toUpperCase());
+                const found = dbMembers.find(m => m.no_anggota.toUpperCase() === scanNo_anggota.toUpperCase());
                 if (found) {
                     currentUser = { role: 'member', ...found };
                     localStorage.setItem('rms_current_user', JSON.stringify(currentUser));
