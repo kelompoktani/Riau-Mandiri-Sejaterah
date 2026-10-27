@@ -661,7 +661,7 @@
             }
         }
 
-        // --- RENDER ID CARD DENGAN LABEL LENGKAP & UKURAN PRESISI ---
+        // --- RENDER ID CARD DENGAN PENYESUAIAN PRESISI TOTAL ---
         function generateCardCanvasElement(m) {
             return new Promise(resolve => {
                 const hiddenArea = document.getElementById('export-card-hidden-area');
@@ -671,40 +671,40 @@
                     <div id="temp-card" style="width:1012px; height:638px; background-image: url('./card-template.png'); background-size: cover; background-position: center; font-family:'Plus Jakarta Sans', sans-serif; position:relative; overflow:hidden; box-sizing:border-box;">
                         
                         <!-- Kolom Label Kiri -->
-                        <div style="position:absolute; top:208px; left:52px; display:flex; flex-direction:column; gap:21px; width:210px;">
-                            <div style="height:38px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">Nama Anggota</span></div>
-                            <div style="height:38px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">Jabatan</span></div>
-                            <div style="height:38px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">Nomor Anggota</span></div>
-                            <div style="height:38px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">Wilayah</span></div>
+                        <div style="position:absolute; top:200px; left:52px; display:flex; flex-direction:column; gap:20px; width:210px;">
+                            <div style="height:42px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.2;">Nama Anggota</span></div>
+                            <div style="height:42px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.2;">Jabatan</span></div>
+                            <div style="height:42px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.2;">Nomor Anggota</span></div>
+                            <div style="height:42px; display:flex; align-items:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.2;">Wilayah</span></div>
                         </div>
 
                         <!-- Kolom Titik Dua (:) -->
-                        <div style="position:absolute; top:208px; left:272px; display:flex; flex-direction:column; gap:21px; width:25px; text-align:center;">
-                            <div style="height:38px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">:</span></div>
-                            <div style="height:38px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">:</span></div>
-                            <div style="height:38px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">:</span></div>
-                            <div style="height:38px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.4;">:</span></div>
+                        <div style="position:absolute; top:200px; left:272px; display:flex; flex-direction:column; gap:20px; width:25px; text-align:center;">
+                            <div style="height:42px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.2;">:</span></div>
+                            <div style="height:42px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.2;">:</span></div>
+                            <div style="height:42px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.2;">:</span></div>
+                            <div style="height:42px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.2;">:</span></div>
                         </div>
 
-                        <!-- Kolom Nilai / Data Anggota (Diperbesar tinggi baris & disesuaikan posisi kotak hijau) -->
-                        <div style="position:absolute; top:208px; left:305px; right:350px; display:flex; flex-direction:column; gap:21px;">
-                            <div style="height:38px; display:flex; align-items:center;">
-                                <strong style="font-size:24px; color:#111827; font-weight:800; line-height:1.4; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(m.name)}</strong>
+                        <!-- Kolom Nilai / Data Anggota (Nama diperlebar & area kotak hijau disesuaikan presisi) -->
+                        <div style="position:absolute; top:200px; left:305px; right:330px; display:flex; flex-direction:column; gap:20px;">
+                            <div style="height:42px; display:flex; align-items:center;">
+                                <strong style="font-size:24px; color:#111827; font-weight:800; line-height:1.2; white-space:nowrap; overflow:visible;">${esc(m.name)}</strong>
                             </div>
-                            <div style="height:38px; display:flex; align-items:center;">
-                                <span style="font-size:22px; font-weight:700; color:#111827; line-height:1.4;">${esc(m.role)}</span>
+                            <div style="height:42px; display:flex; align-items:center;">
+                                <span style="font-size:22px; font-weight:700; color:#111827; line-height:1.2;">${esc(m.role)}</span>
                             </div>
-                            <div style="height:38px; display:flex; align-items:center;">
-                                <span style="font-family:monospace; font-size:22px; color:#FDE68A; background:#1E5E3A; padding:4px 18px; border-radius:8px; font-weight:bold; letter-spacing:1px; border:2px solid #D4AF37; line-height:1.2; display:inline-block; transform:translateY(-1px);">${esc(m.no_anggota)}</span>
+                            <div style="height:42px; display:flex; align-items:center;">
+                                <span style="font-family:monospace; font-size:22px; color:#FDE68A; background:#1E5E3A; padding:4px 20px; border-radius:8px; font-weight:bold; letter-spacing:1px; border:2px solid #D4AF37; line-height:1.2; display:inline-block;">${esc(m.no_anggota)}</span>
                             </div>
-                            <div style="height:38px; display:flex; align-items:center;">
-                                <strong style="font-size:22px; color:#111827; font-weight:700; line-height:1.4;">${esc(m.loper || '-')}</strong>
+                            <div style="height:42px; display:flex; align-items:center;">
+                                <strong style="font-size:22px; color:#111827; font-weight:700; line-height:1.2;">${esc(m.loper || '-')}</strong>
                             </div>
                         </div>
 
-                        <!-- Penempatan QR Code (Diperbesar ukurannya agar pas mengisi kotak putih) -->
-                        <div style="position:absolute; top:204px; right:82px; width:208px; height:208px; background:#ffffff; display:flex; align-items:center; justify-content:center;">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUrl)}" style="width:200px; height:200px; display:block;" />
+                        <!-- Penempatan QR Code (Diperbesar agar pas memenuhi kotak putih templat) -->
+                        <div style="position:absolute; top:195px; right:76px; width:220px; height:220px; background:#ffffff; display:flex; align-items:center; justify-content:center;">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=210x210&data=${encodeURIComponent(qrUrl)}" style="width:210px; height:210px; display:block;" />
                         </div>
 
                     </div>
@@ -834,7 +834,7 @@
                     </div>
                     <div class="flex items-center space-x-1 shrink-0">
                         <button onclick="downloadSingleECard('${m.id}')" class="text-rms-green text-xs px-2.5 py-1.5 font-bold bg-emerald-50 hover:bg-emerald-100 rounded-lg transition border border-emerald-200"><i class="fa-solid fa-id-card"></i></button>
-                        <button onclick="editMember('${m.id}')" class="text-amber-700 text-xs px-2 py-1.5 font-bold hover:bg-amber-100 rounded-lg transition"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="editMember('${m.id}')" class="text-amber-700 text-xs px-2.5 py-1.5 font-bold hover:bg-amber-100 rounded-lg transition"><i class="fa-solid fa-pen"></i></button>
                         <button onclick="deleteMember('${m.id}')" class="text-rose-500 text-xs px-2.5 py-1.5 font-bold hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
