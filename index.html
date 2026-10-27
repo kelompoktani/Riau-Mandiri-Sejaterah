@@ -661,7 +661,7 @@
             }
         }
 
-        // --- RENDER ID CARD DENGAN PENYESUAIAN PRESISI TOTAL ---
+        // --- RENDER ID CARD DENGAN PRESISI TOTAL SESUAI GAMBAR REFERENSI BARU ---
         function generateCardCanvasElement(m) {
             return new Promise(resolve => {
                 const hiddenArea = document.getElementById('export-card-hidden-area');
@@ -686,25 +686,25 @@
                             <div style="height:42px; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:700; color:#1E5E3A; line-height:1.2;">:</span></div>
                         </div>
 
-                        <!-- Kolom Nilai / Data Anggota (Nama diperlebar & area kotak hijau disesuaikan presisi) -->
-                        <div style="position:absolute; top:200px; left:305px; right:330px; display:flex; flex-direction:column; gap:20px;">
+                        <!-- Kolom Nilai / Data Anggota -->
+                        <div style="position:absolute; top:200px; left:305px; right:320px; display:flex; flex-direction:column; gap:20px;">
                             <div style="height:42px; display:flex; align-items:center;">
-                                <strong style="font-size:24px; color:#111827; font-weight:800; line-height:1.2; white-space:nowrap; overflow:visible;">${esc(m.name)}</strong>
+                                <strong style="font-size:26px; color:#111827; font-weight:800; line-height:1.2; white-space:nowrap; overflow:visible;">${esc(m.name)}</strong>
                             </div>
                             <div style="height:42px; display:flex; align-items:center;">
                                 <span style="font-size:22px; font-weight:700; color:#111827; line-height:1.2;">${esc(m.role)}</span>
                             </div>
                             <div style="height:42px; display:flex; align-items:center;">
-                                <span style="font-family:monospace; font-size:22px; color:#FDE68A; background:#1E5E3A; padding:4px 20px; border-radius:8px; font-weight:bold; letter-spacing:1px; border:2px solid #D4AF37; line-height:1.2; display:inline-block;">${esc(m.no_anggota)}</span>
+                                <span style="font-family:monospace; font-size:23px; color:#FDE68A; background:#1E5E3A; padding:5px 22px; border-radius:8px; font-weight:bold; letter-spacing:1px; border:2px solid #D4AF37; line-height:1.2; display:inline-block;">${esc(m.no_anggota)}</span>
                             </div>
                             <div style="height:42px; display:flex; align-items:center;">
                                 <strong style="font-size:22px; color:#111827; font-weight:700; line-height:1.2;">${esc(m.loper || '-')}</strong>
                             </div>
                         </div>
 
-                        <!-- Penempatan QR Code (Diperbesar agar pas memenuhi kotak putih templat) -->
-                        <div style="position:absolute; top:195px; right:76px; width:220px; height:220px; background:#ffffff; display:flex; align-items:center; justify-content:center;">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=210x210&data=${encodeURIComponent(qrUrl)}" style="width:210px; height:210px; display:block;" />
+                        <!-- Penempatan QR Code (Diperbesar ukuran persis sesuai referensi baru) -->
+                        <div style="position:absolute; top:190px; right:70px; width:232px; height:232px; background:#ffffff; display:flex; align-items:center; justify-content:center;">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrUrl)}" style="width:220px; height:220px; display:block;" />
                         </div>
 
                     </div>
