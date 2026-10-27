@@ -661,7 +661,7 @@
             }
         }
 
-        // --- RENDER ID CARD DENGAN PRESISI TOTAL SESUAI GAMBAR REFERENSI BARU ---
+        // --- RENDER ID CARD DENGAN UKURAN QR CODE 330x330 PX ---
         function generateCardCanvasElement(m) {
             return new Promise(resolve => {
                 const hiddenArea = document.getElementById('export-card-hidden-area');
@@ -687,7 +687,7 @@
                         </div>
 
                         <!-- Kolom Nilai / Data Anggota -->
-                        <div style="position:absolute; top:200px; left:305px; right:320px; display:flex; flex-direction:column; gap:20px;">
+                        <div style="position:absolute; top:200px; left:305px; right:380px; display:flex; flex-direction:column; gap:20px;">
                             <div style="height:42px; display:flex; align-items:center;">
                                 <strong style="font-size:26px; color:#111827; font-weight:800; line-height:1.2; white-space:nowrap; overflow:visible;">${esc(m.name)}</strong>
                             </div>
@@ -702,9 +702,9 @@
                             </div>
                         </div>
 
-                        <!-- Penempatan QR Code (Diperbesar ukuran persis sesuai referensi baru) -->
-                        <div style="position:absolute; top:190px; right:70px; width:232px; height:232px; background:#ffffff; display:flex; align-items:center; justify-content:center;">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrUrl)}" style="width:220px; height:220px; display:block;" />
+                        <!-- Penempatan QR Code (Ukuran 330x330 px pas mengisi kotak putih templat) -->
+                        <div style="position:absolute; top:154px; right:52px; width:330px; height:330px; background:#ffffff; display:flex; align-items:center; justify-content:center;">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=330x330&data=${encodeURIComponent(qrUrl)}" style="width:330px; height:330px; display:block;" />
                         </div>
 
                     </div>
@@ -834,8 +834,8 @@
                     </div>
                     <div class="flex items-center space-x-1 shrink-0">
                         <button onclick="downloadSingleECard('${m.id}')" class="text-rms-green text-xs px-2.5 py-1.5 font-bold bg-emerald-50 hover:bg-emerald-100 rounded-lg transition border border-emerald-200"><i class="fa-solid fa-id-card"></i></button>
-                        <button onclick="editMember('${m.id}')" class="text-amber-700 text-xs px-2.5 py-1.5 font-bold hover:bg-amber-100 rounded-lg transition"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="deleteMember('${m.id}')" class="text-rose-500 text-xs px-2.5 py-1.5 font-bold hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="editMember('${m.id}')" class="text-amber-700 text-xs px-2 py-1.5 font-bold hover:bg-amber-100 rounded-lg transition"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteMember('${m.id}')" class="text-rose-500 text-xs px-2 py-1.5 font-bold hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             `).join('');
