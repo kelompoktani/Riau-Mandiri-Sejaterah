@@ -517,26 +517,117 @@
             toast('Anda telah keluar');
         }
 
+        // ---------- Helper gambar OCR ----------
+        function fileToCanvas(file) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    const W = 1600, scale = W / img.width;
+                    const c = document.createElement('canvas');
+                    c.width = W; c.height = Math.round(img.height * scale);
+                    const ctx = c.getContext('2d');
+                    ctx.drawImage(img, 0, 0, c.width, c.height);
+                    resolve(c);
+                };
+                img.onerror = reject;
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        function cropAndClean(src, x, y, w, h) {
+            x = Math.max(0, x); y = Math.max(0, y);
+            w = Math.min(src.width - x, w); h = Math.min(src.height - y, h);
+            const scale = 2;
+            const c = document.createElement('canvas');
+            c.width = w * scale; c.height = h * scale;
+            const ctx = c.getContext('2d');
+            ctx.drawImage(src, x, y, w, h, 0, 0, c.width, c.height);
+
+            // grayscale + kontras + threshold ringan
+            const d = ctx.getImageData(0, 0, c.width, c.height);
+            const px = d.data;
+            for (let i = 0; i < px.length; i += 4) {
+                let g = 0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2];
+                g = (g - 128) * 1.6 + 128;
+                g = g > 150 ? 255 : g < 90 ? 0 : g;
+                px[i] = px[i + 1] = px[i + 2] = Math.max(0, Math.min(255, g));
+            }
+            ctx.putImageData(d, 0, 0);
+            return c;
+        }
+
+        const fixDigits = s => s
+            .replace(/[Oo]/g, '0').replace(/[Il|!]/g, '1')
+            .replace(/B/g, '8').replace(/S/g, '5').replace(/Z/g, '2')
+            .replace(/\D/g, '');
+
+        // ---------- Scan KTP: hanya NIK & Nama ----------
         async function scanKTPImage(e) {
             const file = e.target.files[0];
             if (!file) return;
             const status = document.getElementById('ocr-status');
             status.classList.remove('hidden');
+            let worker;
+
             try {
-                const result = await Tesseract.recognize(file, 'ind');
-                const text = result.data.text;
-                const nikMatch = text.match(/\b\d{16}\b/);
-                if (nikMatch) document.getElementById('add-nik').value = nikMatch[0];
-                const lines = text.split('\n').filter(l => l.trim().length > 3);
-                if (lines.length > 0) {
-                    const possibleName = lines.find(l => /nama/i.test(l)) || lines[0];
-                    document.getElementById('add-name').value = possibleName.replace(/nama|:|nik/gi, '').trim();
-                }
-                toast('Berhasil membaca teks KTP!');
+                const full = await fileToCanvas(file);
+                worker = await Tesseract.createWorker('ind');
+
+                // PASS 1: cari posisi label "NIK" dan "Nama"
+                const p1 = await worker.recognize(cropAndClean(full, 0, 0, full.width, full.height));
+                const words = p1.data.words || [];
+                const S = 2; // skala crop
+                const findLabel = re => words.find(w => re.test(w.text.replace(/[^a-zA-Z0-9]/g, '')));
+                const nikLbl = findLabel(/^n[il1]k$/i);
+                const namaLbl = findLabel(/^nama$/i);
+
+                const strip = (lbl, fbY0, fbY1) => {
+                    if (lbl) {
+                        const b = lbl.bbox, h = (b.y1 - b.y0) / S;
+                        return [Math.round(b.x1 / S + 10), Math.round(b.y0 / S - h * 0.4),
+                                full.width - Math.round(b.x1 / S + 10), Math.round(h * 1.8)];
+                    }
+                    return [Math.round(full.width * 0.25), Math.round(full.height * fbY0),
+                            Math.round(full.width * 0.70), Math.round(full.height * (fbY1 - fbY0))];
+                };
+
+                // PASS 2a: NIK (hanya angka)
+                await worker.setParameters({
+                    tessedit_char_whitelist: '0123456789',
+                    tessedit_pageseg_mode: '7'
+                });
+                const nikBox = strip(nikLbl, 0.16, 0.27);
+                const nikRes = await worker.recognize(cropAndClean(full, ...nikBox));
+                const nik = fixDigits(nikRes.data.text);
+
+                // PASS 2b: Nama (hanya huruf)
+                await worker.setParameters({
+                    tessedit_char_whitelist: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz .,'-",
+                    tessedit_pageseg_mode: '7'
+                });
+                const namaBox = strip(namaLbl, 0.28, 0.38);
+                const namaRes = await worker.recognize(cropAndClean(full, ...namaBox));
+                const nama = namaRes.data.text
+                    .replace(/[^a-zA-Z .,'-]/g, '')
+                    .replace(/\s+/g, ' ')
+                    .trim()
+                    .toUpperCase();
+
+                // Isi form
+                const okNik = /^\d{16}$/.test(nik);
+                if (okNik) document.getElementById('add-nik').value = nik;
+                if (nama.length >= 3) document.getElementById('add-name').value = nama;
+
+                if (okNik && nama.length >= 3) toast('NIK & Nama terbaca, mohon cek sekali lagi');
+                else if (okNik || nama.length >= 3) toast('Sebagian terbaca, lengkapi sisanya manual', 'warn');
+                else toast('Gagal membaca, coba foto lebih jelas', 'warn');
             } catch (err) {
-                toast('Gagal memproses gambar, silakan isi manual', 'warn');
+                console.error('OCR Error:', err);
+                toast('Gagal memproses gambar KTP, isi manual', 'warn');
             } finally {
+                if (worker) await worker.terminate();
                 status.classList.add('hidden');
+                e.target.value = ''; // agar foto yang sama bisa di-scan ulang
             }
         }
 
@@ -834,7 +925,7 @@
                     </div>
                     <div class="flex items-center space-x-1 shrink-0">
                         <button onclick="downloadSingleECard('${m.id}')" class="text-rms-green text-xs px-2.5 py-1.5 font-bold bg-emerald-50 hover:bg-emerald-100 rounded-lg transition border border-emerald-200"><i class="fa-solid fa-id-card"></i></button>
-                        <button onclick="editMember('${m.id}')" class="text-amber-700 text-xs px-2.5 py-1.5 font-bold hover:bg-amber-100 rounded-lg transition"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="editMember('${m.id}')" class="text-amber-700 text-xs px-2 py-1.5 font-bold hover:bg-amber-100 rounded-lg transition"><i class="fa-solid fa-pen"></i></button>
                         <button onclick="deleteMember('${m.id}')" class="text-rose-500 text-xs px-2.5 py-1.5 font-bold hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
@@ -953,7 +1044,7 @@
             const scanNoAnggota = urlParams.get('no_anggota');
 
             if (scanNoAnggota) {
-                const found = dbMembers.find(m => m.no_anggota.toUpperCase() === scanNo_anggota.toUpperCase());
+                const found = dbMembers.find(m => m.no_anggota.toUpperCase() === scanNoAnggota.toUpperCase());
                 if (found) {
                     currentUser = { role: 'member', ...found };
                     localStorage.setItem('rms_current_user', JSON.stringify(currentUser));
